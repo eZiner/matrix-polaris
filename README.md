@@ -34,7 +34,7 @@ Das übergeordnete Konzept steuert die dezentralen, technischen Bausteine an. De
 
 Welcome to the central concept and documentation repository of **Project POLARIS** – an initiative to build a free, federated, and digitally sovereign communication network for municipalities and universities [Matrix-based G2X communication („Neo“) - GitLab, Matrix Live Location Sharing Spec].
 
-🌐 **Official Project Page:** [eZiner.github.io/matrix-polaris](https://github.io)
+🌐 **Official Project Page:** [eZiner.github.io/matrix-polaris](https://eziner.github.io/matrix-polaris/)
 
 ### 💡 The Big Picture
 
