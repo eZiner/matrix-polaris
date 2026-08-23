@@ -8,7 +8,7 @@
 
 Herzlich willkommen im zentralen Koordinations- und Konzept-Repository von **Projekt POLARIS** – der Initiative für ein freies, föderiertes und digital souveränes Kommunikationsnetzwerk der Kommunen und Universitäten in Deutschland [Matrix-based G2X communication („Neo“) - GitLab, Matrix Live Location Sharing Spec].
 
-🌐 **Zur offiziellen Projektseite:** [eZiner.github.io/matrix-polaris](https://github.io)
+🌐 **Zur offiziellen Projektseite:** [eZiner.github.io/matrix-polaris](https://eziner.github.io/matrix-polaris/)
 
 ### 💡 Das große Ganze
 
