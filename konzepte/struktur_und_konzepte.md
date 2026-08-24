@@ -68,7 +68,7 @@ POLARIS ist kein zentrales Datensilo. Jede Universität und jede Kommune betreib
 
 ## 4. Zukünftige Funktions-Roadmap
 
-Für die Weiterentwicklung des technischen Gatevers (`matrix-polaris-gateway`) sind folgende Meilensteine definiert:
+Für die Weiterentwicklung des technischen Gateways (`matrix-polaris-gateway`) sind folgende Meilensteine definiert:
 
 1. **[ ] Modul 1: PostGIS-Datenbankanbindung:** Migration der In-Memory-Polygone in eine performante Geo-Datenbank zur dynamischen Verwaltung von Tausenden Stadtgrenzen im laufenden Betrieb.
 2. **[x] Modul 2: Asynchroner Hysterese-Schutz:** Zeitbasierte Warteliste (`EXIT_PENDING_USERS`), um das Springen von GPS-Signalen an Regionsgrenzen abzufedern (Ping-Pong-Schutz).
