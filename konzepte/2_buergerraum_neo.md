@@ -33,16 +33,16 @@ Ein zentraler Grundpfeiler von Projekt POLARIS ist der **vollständige Verzicht 
                             [ POLARIS Postersatz-Modell ]
 ```
 
-#### Das Schnittstellen-Prinzip statt Fork-Aufwand
-Das Bundesprojekt Neo besteht im Kern aus Open-Source-Frontends (Web-App, iOS- und Android-Clients), die über die standardisierte Matrix-Client-Server-API mit einem Server kommunizieren [Matrix-based G2X communication („Neo“) - GitLab]. Die BundID ist darin lediglich als ein austauschbares Login-Modul (Identity Provider) angehängt. 
+### Das Schnittstellen-Prinzip statt Fork-Aufwand
+Das Bundesprojekt Neo besteht im Kern aus Open-Source-Frontends (Web-App, iOS- und Android-Clients), die über die standardisierte Matrix-Client-Server-API mit einem Server kommunizieren. Die BundID ist darin lediglich als ein austauschbares Login-Modul (Identity Provider) angehängt. 
 
 POLARIS kappt diese Schnittstelle zur BundID auf Serverebene und ersetzt sie durch das **Postersatz-Modell**:
 *   **Kommunale Datenhoheit:** Jede Kommune betreibt einen eigenen, souveränen Matrix-Homeserver (z. B. `matrix.duesseldorf.de`).
 *   **Physischer Vertrauensanker:** Die Verifizierung und Erstellung der Bürger-Accounts erfolgt direkt und datenschutzkonform bei der analogen Identitätsprüfung im lokalen Bürgerbüro. Es wird ein kryptografischer Token erzeugt.
 *   **Nahtlose UI-Kompatibilität:** Der Bürger kann die offiziellen, barrierefreien Neo-Frontends der FITKO uneingeschränkt nutzen. Beim Login verbindet sich die App jedoch nicht mit einer Bundes-Zentraldatenbank, sondern authentifiziert sich direkt am lokalen, kommunalen Homeserver über den im Bürgerbüro erhaltenen Token.
 
-#### 4.1 Rechtliche Rahmenbedingungen und freie Nachnutzung (Public Code)
-Da das Projekt Neo der FITKO unter einer freien Open-Source-Lizenz im offiziellen OpenCoDE-Repository des Bundes bereitgestellt wird, ist für die Integration in POLARIS **kein Code-Fork** erforderlich. Die Nachnutzung und Anpassung der Benutzeroberfläche erfolgt im Rahmen der Open-Source-Vorgaben der öffentlichen Hand („Public Money? Public Code!“). Es werden lediglich die standardisierten Client-Schnittstellen (APIs) bedient, um die Neo-Userinterfaces direkt an die dezentralen, kommunalen POLARIS-Homeserver anzubinden [openDesk Portal, Matrix-based G2X communication („Neo“) - GitLab].
+### Rechtliche Rahmenbedingungen und freie Nachnutzung (Public Code)
+Da das Projekt Neo der FITKO unter einer freien Open-Source-Lizenz im offiziellen OpenCoDE-Repository des Bundes bereitgestellt wird, ist für die Integration in POLARIS **kein Code-Fork** erforderlich. Die Nachnutzung und Anpassung der Benutzeroberfläche erfolgt im Rahmen der Open-Source-Vorgaben der öffentlichen Hand („Public Money? Public Code!“). Es werden lediglich die standardisierten Client-Schnittstellen (APIs) bedient, um die Neo-Userinterfaces direkt an die dezentralen, kommunalen POLARIS-Homeserver anzubinden.
 
 ---
 
