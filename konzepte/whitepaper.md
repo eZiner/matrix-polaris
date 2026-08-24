@@ -9,7 +9,7 @@
 **Architektur, Funktionsweise und Roadmap eines bundesweiten, dezentralen Geo-Fencing-Gateways auf Matrix-Basis**
 
 **Autor:** eZiner  
-**Status:** Technisches Whitepaper (Entwurfsstadium)  
+**Status:** Technisches Whitepaper (Erweitert um PostGIS-Spezifikation)  
 **Datum:** August 2026  
 
 ---
@@ -21,9 +21,9 @@ Das System arbeitet nach dem Prinzip **„Smart Server, Dumb Client“**: Der B�
 
 ---
 
-### 2. Zielarchitektur & Kernkomponenten
+### 2. Zielarchitektur & Datenbank-Infrastruktur
 
-Im Endausbau verlässt das System den Zustand fester Programmiercodes (Hardcoding) und wechselt in eine hochskalierbare, dezentrale Microservice-Architektur.
+Im Endausbau verlässt das System den Zustand fester Programmiercodes (Hardcoding). Die Geofences werden vollständig in eine hochperformante relationale Geodatenbank ausgelagert.
 
 ```text
 +--------------------------------------------------------------+
@@ -34,9 +34,9 @@ Im Endausbau verlässt das System den Zustand fester Programmiercodes (Hardcodin
          v
 +--------------------------------------------------------------+
 
-|                 POLARIS-Gateway (Rust-Core)                  |
+|             POLARIS-Gateway (Python / Rust-Core)             |
 +--------------------------------------------------------------+
-         | (Räumliche SQL-Abfrage / REST-API)
+         | (Asynchrone SQL Spatial Query via asyncpg)
          v
 +--------------------------------------------------------------+
 
@@ -44,33 +44,51 @@ Im Endausbau verlässt das System den Zustand fester Programmiercodes (Hardcodin
 +--------------------------------------------------------------+
 ```
 
-*   **Der Core-Dienst (POLARIS Engine):** Der aktuelle Python-Prototyp wird im Zielzustand in **Rust (Matrix-Rust-SDK)** überführt. Dies garantiert minimale Latenzzeiten und maximale Thread-Sicherheit bei massenhaften Zonenwechseln im Berufsverkehr.
-*   **Das föderierte Zonen-Register (PostGIS):** Die geografischen Grenzen werden als mathematische Polygone in einer **PostgreSQL-Datenbank mit PostGIS-Erweiterung** verwaltet. Jedes Polygon repräsentiert eine Zuständigkeitszelle (Gemeinde, Landkreis, Nationalpark) und hält n-Verknüpfungen zu verschlüsselten Matrix-Raum-IDs.
-*   **Das Postersatz-Modell im Bürgerbüro:** Um die Hürden der BundID (NFC-Zwang, Elster-Zertifikate) zu umgehen, fungiert das physische Bürgerbüro als **Vertrauensanker**. Nach analoger Identitätsprüfung wird ein anonymer Krypto-Token generiert, der dem Bürger sofort seinen lebenslangen, sicheren Matrix-Account freischaltet.
+#### Das relationale Geodaten-Modell (PostGIS)
+Die geografischen Grenzen Deutschlands (Gemeinden, Landkreise) werden als mathematische Polygone mit dem globalen GPS-Koordinatensystem WGS84 (SRID 4326) im kommunalen Rechenzentrum verwaltet. 
+
+Um maximale Performance bei tausenden parallelen Standort-Pings im Berufsverkehr zu garantieren, wird die Tabelle über einen **Räumlichen Index (GiST)** datenbankseitig optimiert:
+
+```sql
+-- Aktivierung der Geodaten-Erweiterung
+CREATE EXTENSION IF NOT EXISTS postgis;
+
+-- Struktur des föderierten Zonen-Registers
+CREATE TABLE polaris_zones (
+    id SERIAL PRIMARY KEY,
+    zone_name VARCHAR(100) NOT NULL,
+    matrix_room_id VARCHAR(100) NOT NULL,
+    geom GEOMETRY(Polygon, 4326) NOT NULL
+);
+
+-- Räumlicher Index für echtzeitfähige ST_Contains-Abfragen
+CREATE INDEX idx_polaris_zones_geom ON polaris_zones USING GIST(geom);
+```
 
 ---
 
 ### 3. Detaillierter Funktionsablauf
 
 1.  **Detektion:** Das Smartphone des Bürgers sendet im Hintergrund standardisierte `m.beacon`-Events an seinen Heim-Server [Matrix Live Location Sharing Spec]. Das POLARIS Gateway fängt dieses verschlüsselte Signal ab.
-2.  **Räumliche Filterung (Spatial Query):** Die Koordinaten werden mittels einer indizierten PostGIS-Abfrage abgeglichen:
+2.  **Räumliche Filterung (Spatial Query):** Das Gateway berechnet die Flächenzugehörigkeit nicht auf Anwendungsebene, sondern delegiert die mathematische Prüfung per asynchronem Datenbank-Treiber (`asyncpg`) direkt an den PostGIS-Kern:
     ```sql
-    SELECT room_id, zone_name FROM polaris_zones 
-    WHERE ST_Contains(geom, ST_SetSRID(ST_MakePoint(%lon, %lat), 4326));
+    SELECT zone_name, matrix_room_id 
+    FROM polaris_zones 
+    WHERE ST_Contains(geom, ST_SetSRID(ST_MakePoint($1, $2), 4326));
     ```
-3.  **Föderierter Beitritt:** Das System ermittelt instantan die Schnittmenge aller gültigen Räume. Über das Matrix-Föderationsprotokoll wird eine Einladung an das Heimatkonto des Nutzers gesendet und im Hintergrund per Auto-Join vollzogen.
-4.  **Das datenschutzkonforme Exit-Protokoll:** Sobald aufeinanderfolgende Signale zeigen, dass der Nutzer die Zone dauerhaft verlassen hat, setzt der Bot einen `m.room.kick`-Befehl ab, um Datenhygiene auf dem Endgerät zu garantieren.
+3.  **Föderierter Beitritt & Hysterese:** Das System ermittelt die Schnittmenge aller gültigen Räume. Über das Matrix-Föderationsprotokoll wird eine Einladung an das Heimatkonto des Nutzers gesendet.
+4.  **Das datenschutzkonforme Exit-Protokoll:** Sobald aufeinanderfolgende Signale zeigen, dass der Nutzer die Zone verlässt, greift ein zeitbasierter Hysterese-Schutz (`EXIT_PENDING_USERS`), bevor nach Ablauf der Karenzzeit der endgültige `m.room.kick`-Befehl abgesetzt wird.
 
 ---
 
-### 4. Roadmap: Noch zu implementierende Funktionen
+### 4. Roadmap: Technische Meilensteine
 
-*   **🛠️ Modul 1: Dynamische PostGIS-Datenbankanbindung**
-    *   *Ziel:* Ersatz der festen Polygone durch eine asynchrone Datenbank-Verbindung (`asyncpg`). Dadurch wird das Hinzufügen neuer Städte im laufenden Betrieb ohne Server-Neustart möglich.
-*   **🛠️ Modul 2: Hysterese- und Karenzzeit-Algorithmus (Ping-Pong-Schutz)**
-    *   *Ziel:* Ein *Exit* wird erst vollzogen, wenn der Nutzer sich entweder mehr als X Kilometer aus der Zone entfernt hat ODER für einen Zeitraum von mindestens 10 Minuten (Time-to-Live) kein Signal mehr innerhalb der Zone registriert wurde. Das verhindert Fehlauslösungen an Grenzen.
-*   **🛠️ Modul 3: Filterung nach Raum-Kategorien (Scopes)**
-    *   *Ziel:* Der Bürger steuert über Chat-Befehle, welche Kanäle er empfangen möchte: *Scope 1: Katastrophenschutz/Verwaltung* (Immer aktiv), *Scope 2: Tourismus/Kultur* (Optional), *Scope 3: Lokaler Handel/Gewerbe* (Opt-in).
+*   **[x] Modul 2: Asynchroner Hysterese-Schutz (Ping-Pong-Schutz)**
+    *   *Status:* **Implementiert.** Zeitbasierte Warteliste fängt Signalsprünge an Regionsgrenzen ab.
+*   **[ ] Modul 1: Dynamische PostGIS-Datenbankanbindung**
+    *   *Status:* **Konzipiert.** Die Migration der lokalen Shapely-Polygone in die oben definierte PostGIS-Struktur ermöglicht das Aufschalten neuer Städte im laufenden Betrieb.
+*   **[ ] Modul 3: Kategorien-Filter (Scopes)**
+    *   *Status:* **In Planung.** Ermöglicht dem Bürger, via Chat-Befehl (z. B. `!scope tourismus aus`) optionale Info-Kanäle stummzuschalten oder zu blockieren.
 
 ---
 
@@ -87,9 +105,9 @@ The system follows a **"Smart Server, Dumb Client"** architecture: citizens util
 
 ---
 
-### 2. Target Architecture & Core Components
+### 2. Target Architecture & Database Infrastructure
 
-In its final evolutionary state, the system transitions from hardcoded values into a highly scalable, decentralized microservice architecture.
+In its final evolutionary state, the system shifts away from hardcoded values. Geofences are completely decoupled into a highly performant relational spatial database.
 
 ```text
 +--------------------------------------------------------------+
@@ -100,9 +118,9 @@ In its final evolutionary state, the system transitions from hardcoded values in
          v
 +--------------------------------------------------------------+
 
-|                 POLARIS Gateway (Rust Core)                  |
+|             POLARIS Gateway (Python / Rust Core)             |
 +--------------------------------------------------------------+
-         | (Spatial SQL Query / REST API)
+         | (Asynchronous SQL Spatial Query via asyncpg)
          v
 +--------------------------------------------------------------+
 
@@ -110,33 +128,53 @@ In its final evolutionary state, the system transitions from hardcoded values in
 +--------------------------------------------------------------+
 ```
 
-*   **The Core Service (POLARIS Engine):** The current Python prototype will be ported to **Rust (Matrix-Rust-SDK)** for production. This guarantees minimal latency and optimal thread safety during massive rush-hour zone transitions.
-*   **The Federated Zone Register (PostGIS):** Geographical boundaries are managed as mathematical polygons within a **PostgreSQL database with PostGIS extensions**. Each polygon represents an administrative cell (municipality, county, national park) and holds n-mappings to encrypted Matrix room IDs.
-*   **The Trust Anchor Model:** To bypass the high friction of federal identity card infrastructure (NFC smartphone scanning, certificates), the physical municipal citizens' office acts as a **Trust Anchor**. After physical verification, an anonymous crypto-token is generated, immediately activating the citizen's lifelong, secure Matrix account.
+#### The Spatial Relational Data Model (PostGIS)
+Geographical boundaries of municipalities are managed as mathematical polygons using the WGS84 coordinate system (SRID 4326) within municipal data centers.
+
+To ensure massive scalability during peak commuting hours, a **Spatial Index (GiST)** optimized database-side processing is implemented:
+
+```sql
+CREATE EXTENSION IF NOT EXISTS postgis;
+
+CREATE TABLE polaris_zones (
+    id SERIAL PRIMARY KEY,
+    zone_name VARCHAR(100) NOT NULL,
+    matrix_room_id VARCHAR(100) NOT NULL,
+    geom GEOMETRY(Polygon, 4326) NOT NULL
+);
+
+CREATE INDEX idx_polaris_zones_geom ON polaris_zones USING GIST(geom);
+```
 
 ---
 
 ### 3. Detailed Functional Workflow
 
-1.  **Detection:** The citizen's smartphone broadcasts standardized `m.beacon` events to its home server in the background [Matrix Live Location Sharing Spec]. The POLARIS Gateway intercepts this encrypted signal.
-2.  **Spatial Query:** The coordinates are matched via an indexed PostGIS database query:
+1.  **Detection:** The citizen's smartphone broadcasts standardized `m.beacon` events to its home server [Matrix Live Location Sharing Spec]. The POLARIS Gateway intercepts this encrypted signal.
+2.  **Spatial Query:** Geometry calculation happens directly inside the database cluster via asynchronous drivers (`asyncpg`), using an indexed bounding-box query:
     ```sql
-    SELECT room_id, zone_name FROM polaris_zones 
-    WHERE ST_Contains(geom, ST_SetSRID(ST_MakePoint(%lon, %lat), 4326));
+    SELECT zone_name, matrix_room_id 
+    FROM polaris_zones 
+    WHERE ST_Contains(geom, ST_SetSRID(ST_MakePoint($1, $2), 4326));
     ```
-3.  **Federated Join:** The system instantly calculates the intersection of all valid rooms. Using the Matrix federation protocol, an invite is transmitted to the user's home account and processed in the background via auto-join.
-4.  **Privacy-Compliant Exit Protocol:** Once sequential signals verify that the user has permanently left the zone, the bot executes an `m.room.kick` command to guarantee data hygiene on the user's device.
+3.  **Federated Join & Hysteresis:** The system resolves the room matches. Using the Matrix federation protocol, an invite is transmitted to the user's home account.
+4.  **Privacy-Compliant Exit Protocol:** When location logs indicate a user has left a zone, a time-based hysteresis routine (`EXIT_PENDING_USERS`) cushions the connection before the final `m.room.kick` command is fired.
 
 ---
 
-### 4. Roadmap: Pending Implementations
+### 4. Roadmap: Technical Milestones
 
-*   **🛠️ Module 1: Dynamic PostGIS Database Integration**
-    *   *Goal:* Replacing memory-bound polygons with an asynchronous database connection (`asyncpg`). This allows municipalities to register new boundaries on-the-fly without restarting the service core.
-*   **🛠️ Module 2: Hysteresis & Grace-Period Algorithm (Ping-Pong Protection)**
-    *   *Goal:* Exits will only be finalized if the user moves more than X kilometers away from the boundary OR if no location signals are registered within the zone for a minimum Time-to-Live (TTL) of 10 minutes. This eliminates boundary jitter.
-*   **🛠️ Module 3: Room Category Filtering (Scopes)**
-    *   *Goal:* Citizens can filter incoming dynamic channels via chat commands: *Scope 1: Emergency/Administration* (Always active), *Scope 2: Tourism/Culture* (Optional), *Scope 3: Local Commerce/Gewerbe* (Opt-in).
+*   **[x] Module 2: Asynchronous Hysteresis Protection (Ping-Pong Protection)**
+    *   *Status:* **Implemented.** Protects boundaries from signal jitter.
+*   **[ ] Module 1: Dynamic PostGIS Database Integration**
+    *   *Status:* **Designed.** Moving local geometric data structures to PostGIS to allow dynamic boundary registrations without server restarts.
+*   **[ ] Module 3: Room Category Filtering (Scopes)**
+    *   *Status:* **Planned.** Allows filtering dynamic channels via custom bot commands (e.g., `!scope tourism off`).
 
 ---
 
+## 📄 License & Trademark Disclaimer
+
+This project is licensed under the **MIT License**. Feel free to use, copy, and modify this concept for your own municipality or research project.
+
+⚠️ **Rechtlicher Hinweis / Trademark Disclaimer:**  
