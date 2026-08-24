@@ -21,7 +21,7 @@ POLARIS setzt auf das physische Bürgerbüro als Vertrauensanker statt auf einen
 
 ## 2. Das Schnittstellen-Prinzip: FITKO „Neo“ ohne BundID-Kopplung
 
-Das System baut auf der FITKO-Initiative „Neo“ auf. Da die Frontends als Open-Source Public-Code bereitgestellt werden, ist kein Code-Fork notwendig. Details zur vollen UI-Nachnutzung des barrierefreien User-Interfaces des Bundes sowie die vollständigen Markdown-Inhalte können den referenzierten Dokumenten entnommen werden.
+Das System baut auf dem [FITKO-Projekt „Neo“](https://gitlab.opencode.de/fitko/matrix-g2x) auf. Die Frontends werden als Open-Source-Public-Code bereitgestellt. Ein Code-Fork ist nicht notwendig.
 
 ---
 
