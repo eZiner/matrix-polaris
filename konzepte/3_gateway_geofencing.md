@@ -36,3 +36,38 @@ CREATE TABLE polaris_zones (
 -- 3. Spatial Index für echtzeitfähige Abfragen im Pendlerverkehr
 CREATE INDEX idx_polaris_zones_geom ON polaris_zones USING GIST(geom);
 ```
+---
+
+## 3. Asynchrone SQL Spatial Queries (Echtzeit-Verarbeitung)
+
+Die `bot.py` empfängt die vom Element- oder Neo-Client via Matrix-Föderation weitergeleiteten GPS-Koordinaten [Matrix-based G2X communication („Neo“) - GitLab, Matrix Live Location Sharing Spec]. Anstatt die Geometrie auf Anwendungsebene rechenintensiv zu parsen, delegiert das Gateway die Abfrage über den asynchronen Treiber `asyncpg` per Bounding-Box-Prüfung direkt an die Datenbank:
+
+```sql
+SELECT zone_name, matrix_room_id 
+FROM polaris_zones 
+WHERE ST_Contains(geom, ST_SetSRID(ST_MakePoint($1, $2), 4326));
+```
+
+Diese SQL-Abfrage prüft in Millisekunden, in welchem städtischen Polygon sich der Längengrad (`$1`) und Breitengrad (`$2`) des Bürgers befindet [Matrix-based G2X communication („Neo“) - GitLab].
+
+---
+
+## 4. Hysterese- und Cooldown-Algorithmus (Ping-Pong-Schutz)
+
+Um im dichten Berufsverkehr oder bei ungenauem GPS-Empfang (z.B. in waldreichen Regionen wie dem Harz) kaskadierende Server-Lasten zu verhindern, implementiert das Gateway eine zeitbasierte Dämpfung logischer Zustände.
+
+```text
+[ Bürger verlässt Zone ] ➔ Auf Warteliste setzen (`EXIT_PENDING_USERS`) ➔ Cooldown startet
+
+                                 |                                           |
+                    (Rückkehr innerhalb von 10 Min?)                  (Zeit abgelaufen?)
+
+                                 |                                           |
+                                 v                                           v
+                     [ Kick abgebrochen: Bleibt im Raum ]           [ Echter Exit: m.room.kick ]
+```
+
+### Die Ablauflogik des Schutzes:
+* **Der Eintritt (Enter):** Befindet sich der Bürger laut PostGIS-Abfrage in einer neuen Zone, wird sofort eine Einladung an das Nutzerkonto abgesetzt [Matrix-based G2X communication („Neo“) - GitLab]. Befand sich die Raum-ID zuvor auf der temporären Warteliste, wird sie dort sofort gelöscht (Rettung aus dem Cooldown).
+* **Die Warteliste (Exit Pending):** Verlässt das Signal das Polygon, wird der Nutzer **nicht** sofort gekickt [Matrix Live Location Sharing Spec]. Das Gateway speichert den aktuellen Zeitstempel im internen Register `EXIT_PENDING_USERS` ab.
+* **Der asynchrone Cleanup-Task:** Eine permanente Hintergrundschleife (`cooldown_cleanup_loop`) prüft sekündlich alle Einträge auf der Warteliste. Erst wenn die Differenz zwischen der aktuellen Serverzeit und dem Exit-Zeitstempel die definierte Pufferzeit (z. B. 600 Sekunden für 10 Minuten) überschreitet, wird der Befehl `m.room.kick` ausgeführt und das Endgerät des Bürgers datenschutzkonform bereinigt [Matrix Live Location Sharing Spec].
