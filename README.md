@@ -22,7 +22,8 @@ In diesem Haupt-Repository finden Sie den theoretischen und politischen Überbau
 ### 🛠️ Technische Module
 
 Das übergeordnete Konzept steuert die dezentralen, technischen Bausteine an. Den Quellcode für das automatisierte, standortbasierte Zonen-Management (Geo-Fencing-Bot via Matrix-Beacons) finden Sie im separaten Repository:
-👉 **[matrix-polaris-gateway](https://github.com)**
+
+👉 **[matrix-polaris-gateway](https://github.com/eZiner/matrix-polaris-gateway)**
 
 ---
 
