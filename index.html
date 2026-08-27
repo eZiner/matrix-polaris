@@ -166,7 +166,110 @@
             margin-bottom: 10px;
             font-size: 1.05rem;
         }
-    </style>
+/* Styling NUR für Links mit dem Attribut rel="external" */
+a[rel~="external"] {
+    color: #00adb5;
+    text-decoration: none !important; /* Jede native Unterstreichung verbieten */
+    
+    /* Rahmenlinie, die exakt unter dem Text liegt */
+    border-bottom: 1px solid #00adb5;
+    padding-bottom: 2px;              /* Abstand zwischen Text und Linie */
+    margin-right: 14px;               /* Platz für den Pfeil außerhalb der Linie */
+    
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Der schräge Pfeil nach rechts oben (↗) */
+a[rel~="external"]::after {
+    content: "↗";
+    font-size: 0.85em;
+    
+    /* Pfeil wird außerhalb der border-bottom-Linie positioniert */
+    position: absolute;
+    right: -14px;
+    top: 50%;
+    transform: translateY(-50%);
+    
+    display: inline-block;
+    transition: transform 0.2s ease;
+}
+
+/* Hover-Effekt: Farben leuchten auf */
+a[rel~="external"]:hover {
+    color: #00fff2;
+    border-color: #00fff2; /* Die Linie färbt sich perfekt mit um */
+}
+
+/* Der Pfeil bewegt sich reibungslos nach rechts oben */
+a[rel~="external"]:hover::after {
+    /* Kombiniert das vertikale Zentrieren mit der Flug-Animation */
+    transform: translate(3px, calc(-50% - 3px)); 
+}
+/* =====================================================================
+   Styling NUR für Links mit dem Attribut rel="internal" (Pfeil nach unten)
+   ===================================================================== */
+a[rel="internal"] {
+    color: #00adb5;
+    text-decoration: none !important;
+    
+    /* Rahmenlinie unter dem Text */
+    border-bottom: 1px solid #00adb5;
+    padding-bottom: 2px;
+    margin-right: 14px;               /* Platz für den Pfeil außerhalb der Linie */
+    
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+/* =====================================================================
+   Styling NUR für Links mit dem Attribut rel="internal" (Pfeil nach rechts)
+   ===================================================================== */
+a[rel="internal"] {
+    color: #00adb5;
+    text-decoration: none !important;
+    
+    /* Rahmenlinie unter dem Text */
+    border-bottom: 1px solid #00adb5;
+    padding-bottom: 2px;
+    margin-right: 14px;               /* Platz für den Pfeil außerhalb der Linie */
+    
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Der horizontale Pfeil nach rechts (→) */
+a[rel="internal"]::after {
+    content: "→";                     /* Das Unicode-Zeichen für rechts */
+    font-size: 0.9em;                 /* Horizontale Pfeile wirken oft etwas zierlicher, daher minimal größer */
+    
+    /* Pfeil wird absolut außerhalb der border-bottom-Linie positioniert */
+    position: absolute;
+    right: -14px;
+    top: 50%;
+    transform: translateY(-50%);
+    
+    display: inline-block;
+    transition: transform 0.2s ease;
+}
+
+/* Hover-Effekt: Farben leuchten auf */
+a[rel="internal"]:hover {
+    color: #00fff2;
+    border-color: #00fff2;
+}
+
+/* Der Pfeil bewegt sich rein HORIZONTAL nach rechts */
+a[rel="internal"]:hover::after {
+    /* Schiebt den Pfeil 4px nach rechts, bleibt aber vertikal exakt zentriert (-50%) */
+    transform: translate(4px, -50%); 
+}    </style>
 </head>
 <body>
 
@@ -198,11 +301,26 @@ POLARIS ist der architektonische Entwurf für ein bundesweites, öffentliches Ma
 <p>
 Das Konzept sieht eine enge regionale Kooperation zwischen Wissenschaft und Kommunalverwaltung vor: Universitäre Forschung, studentische Innovation und lokale Rathäuser nutzen Synergien für eine souveräne Infrastruktur.
 </p>
+
+    </section>
+
+    <section>
+        <h3>🏛️ Der Bürgerraum</h3>
 <p>
-Ein zentraler Baustein dieses Ökosystems ist das Matrix-Neo-basierte Gateway (der „Bürgerraum“), das eine datenschutzkonforme, plattformunabhängige und intuitive Kommunikation zwischen Bürgern und Verwaltung ermöglicht.
+Ein zentraler Baustein des POLARIS-Ökosystems ist der auf  <a href="https://gitlab.opencode.de/fitko/matrix-g2x/" rel="external noopener" target="_blank">Matrix-Neo</a> basierende „Bürgerraum“ (dort Postfach genannt), das eine datenschutzkonforme, plattformunabhängige und intuitive Kommunikation zwischen Bürgern und Verwaltung ermöglicht.
+        <div style="width: 100%; max-width: 1100px; margin: 2.5rem auto; padding: 0 15px; box-sizing: border-box;">
+          <img src="assets/img/zentrale-artefakte.png" 
+               alt="POLARIS - Dezentrale Matrix-Funkstation im urbanen Stil" 
+               style="width: 100%; height: auto; display: block; border-radius: 12px; box-shadow: 0 6px 25px rgba(0,0,0,0.3); object-fit: cover;">
+        </div>
 </p>
+
+    </section>
+
+    <section>
+        <h3>🛠️ Geo-Fencing Gateway</h3>
 <p>
-Innovatives Herzstück des Projekts ist ein Geo-Fencing-Gateway, dass die kommunalen Matrix-Knoten unterwegs automatisch für regionale Informationen nutzt. Es fungiert wie eine digitale „AM-Radio-Station“ für Regionen: Wenn Bürger oder Pendler eine Regionsgrenze passieren, klinkt sich ihr System im Hintergrund vollautomatisch und geräuschlos in die lokale „Frequenz“ ein, um ortsbezogene Info-Services, Bürger-Kanäle und Alarmsysteme direkt nutzbar zu machen.        
+Das <a href="https://github.com/eZiner/matrix-polaris-gateway/" rel="internal">Matrix-POLARIS-Gateway</a> ist das innovative Herzstück des Projekts. Es fungiert wie eine digitale „Radio-Station“ für Regionen: Wenn Bürger oder Pendler eine Regionsgrenze passieren, klinkt sich ihr System im Hintergrund vollautomatisch und geräuschlos in die lokale „Frequenz“ ein, um ortsbezogene Info-Services, Bürger-Kanäle und Alarmsysteme direkt nutzbar zu machen.        
 </p>
 
     </section>
@@ -211,7 +329,7 @@ Innovatives Herzstück des Projekts ist ein Geo-Fencing-Gateway, dass die kommun
         <h2>🌌 POLARIS im Alltag</h2>
 <p><strong>🏡 Zuhause im Oberharz - Der direkte Draht</strong></p>
 <p>Sie sitzen morgens am Küchentisch und trinken Kaffee. Ihnen fällt ein, dass Sie für den nächsten Monat dringend einen neuen Reisepass beantragen müssen.</p>
-<p><strong>• So hilft POLARIS:</strong> Sie öffnen einfach Ihre App auf dem Smartphone. Kein langes Suchen nach Telefonnummern, kein Warten in der Schleife. Über den verifizierten Kanal des Bürgerbüros schreiben Sie direkt: <em>„Guten Morgen, ich benötige einen Termin für einen Reisepass.“</em> Ein automatischer Assistent oder ein Mitarbeiter im Rathaus antwortet Ihnen direkt im sicheren Chat und schickt Ihnen einen Termin.</p>
+<p><strong>• So hilft POLARIS:</strong> Sie öffnen einfach <a href="https://matrix.org/ecosystem/clients/element-x/" rel="external noopener" target="_blank">Element X</a> auf ihrem Desktop oder Smartphone. Kein langes Suchen nach Telefonnummern, kein Warten in der Schleife. Über den verifizierten Kanal des Bürgerbüros schreiben Sie direkt: <em>„Guten Morgen, ich benötige einen Termin für einen Reisepass.“</em> Ein automatischer Assistent oder ein Mitarbeiter im Rathaus antwortet Ihnen direkt im sicheren Chat und schickt Ihnen einen Termin.</p>
 <p><strong>• Der Mehrwert vor Ort:</strong> Gleichzeitig erhalten Sie im lokalen Kanal der Stadt die Meldung, dass wegen dringender Wartungsarbeiten das Wasser in Ihrer Straße am Donnerstagvormittag kurzzeitig abgestellt wird. Sie sind informiert, bevor das Problem entsteht – datenschutzkonform und ohne, dass Ihre Daten an Werbekonzerne fließen.</p>
 <p><strong>🚗 Unterwegs – Sicherheit in Echtzeit</strong></p>
 <p>Sie fahren am Wochenende über die Bundesstraße Richtung Goslar oder Osterode. Das Wetter im Oberharz schlägt plötzlich um – dichter Nebel und plötzliches Glatteis setzen ein.</p>
@@ -245,7 +363,7 @@ Innovatives Herzstück des Projekts ist ein Geo-Fencing-Gateway, dass die kommun
                     <h3>🛠️ Das Geo-Fencing Gateway</h3>
                     <p>Ermöglicht es Servern, mobile Bürger und Autofahrer via Live-Standort (Beacons) vollautomatisch und datenschutzkonform in regionale Chat-Zellen hinein- und herauszuführen.</p>
                 </div>
-                <a href="https://github.com/eZiner/matrix-polaris-gateway" class="btn">Zum Quellcode</a>
+                <a href="https://github.com/eZiner/matrix-polaris-gateway/" class="btn">Zum Quellcode</a>
             </div>
         </div>
     </section>
