@@ -50,6 +50,10 @@
             letter-spacing: -0.5px;
         }
 
+        h2,h3,h4 {
+            text-align: center;
+        }
+
         .subtitle {
             color: var(--accent-blue);
             font-size: 1.25rem;
@@ -166,120 +170,127 @@
             margin-bottom: 10px;
             font-size: 1.05rem;
         }
-/* Styling NUR für Links mit dem Attribut rel="external" */
-a[rel~="external"] {
-    color: #00adb5;
-    text-decoration: none !important; /* Jede native Unterstreichung verbieten */
-    
-    /* Rahmenlinie, die exakt unter dem Text liegt */
-    border-bottom: 1px solid #00adb5;
-    padding-bottom: 2px;              /* Abstand zwischen Text und Linie */
-    margin-right: 14px;               /* Platz für den Pfeil außerhalb der Linie */
-    
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    transition: color 0.2s ease, border-color 0.2s ease;
-}
 
-/* Der schräge Pfeil nach rechts oben (↗) */
-a[rel~="external"]::after {
-    content: "↗";
-    font-size: 0.85em;
-    
-    /* Pfeil wird außerhalb der border-bottom-Linie positioniert */
-    position: absolute;
-    right: -14px;
-    top: 50%;
-    transform: translateY(-50%);
-    
-    display: inline-block;
-    transition: transform 0.2s ease;
-}
+        /* =====================================================================
+        Styling für Links
+        ===================================================================== */
 
-/* Hover-Effekt: Farben leuchten auf */
-a[rel~="external"]:hover {
-    color: #00fff2;
-    border-color: #00fff2; /* Die Linie färbt sich perfekt mit um */
-}
+        /* Styling NUR für Links mit dem Attribut rel="external" */
+        a[rel~="external"] {
+            color: #00adb5;
+            text-decoration: none !important; /* Jede native Unterstreichung verbieten */
+            
+            /* Rahmenlinie, die exakt unter dem Text liegt */
+            border-bottom: 1px solid #00adb5;
+            padding-bottom: 2px;              /* Abstand zwischen Text und Linie */
+            margin-right: 14px;               /* Platz für den Pfeil außerhalb der Linie */
+            
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            transition: color 0.2s ease, border-color 0.2s ease;
+        }
 
-/* Der Pfeil bewegt sich reibungslos nach rechts oben */
-a[rel~="external"]:hover::after {
-    /* Kombiniert das vertikale Zentrieren mit der Flug-Animation */
-    transform: translate(3px, calc(-50% - 3px)); 
-}
-/* =====================================================================
-   Styling NUR für Links mit dem Attribut rel="internal" (Pfeil nach unten)
-   ===================================================================== */
-a[rel="internal"] {
-    color: #00adb5;
-    text-decoration: none !important;
-    
-    /* Rahmenlinie unter dem Text */
-    border-bottom: 1px solid #00adb5;
-    padding-bottom: 2px;
-    margin-right: 14px;               /* Platz für den Pfeil außerhalb der Linie */
-    
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    transition: color 0.2s ease, border-color 0.2s ease;
-}
+        /* Der schräge Pfeil nach rechts oben (↗) */
+        a[rel~="external"]::after {
+            content: "↗";
+            font-size: 0.85em;
+            
+            /* Pfeil wird außerhalb der border-bottom-Linie positioniert */
+            position: absolute;
+            right: -14px;
+            top: 50%;
+            transform: translateY(-50%);
+            
+            display: inline-block;
+            transition: transform 0.2s ease;
+        }
 
-/* =====================================================================
-   Styling NUR für Links mit dem Attribut rel="internal" (Pfeil nach rechts)
-   ===================================================================== */
-a[rel="internal"] {
-    color: #00adb5;
-    text-decoration: none !important;
-    
-    /* Rahmenlinie unter dem Text */
-    border-bottom: 1px solid #00adb5;
-    padding-bottom: 2px;
-    margin-right: 14px;               /* Platz für den Pfeil außerhalb der Linie */
-    
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    transition: color 0.2s ease, border-color 0.2s ease;
-}
+        /* Hover-Effekt: Farben leuchten auf */
+        a[rel~="external"]:hover {
+            color: #00fff2;
+            border-color: #00fff2; /* Die Linie färbt sich perfekt mit um */
+        }
 
-/* Der horizontale Pfeil nach rechts (→) */
-a[rel="internal"]::after {
-    content: "→";                     /* Das Unicode-Zeichen für rechts */
-    font-size: 0.9em;                 /* Horizontale Pfeile wirken oft etwas zierlicher, daher minimal größer */
-    
-    /* Pfeil wird absolut außerhalb der border-bottom-Linie positioniert */
-    position: absolute;
-    right: -14px;
-    top: 50%;
-    transform: translateY(-50%);
-    
-    display: inline-block;
-    transition: transform 0.2s ease;
-}
+        /* Der Pfeil bewegt sich reibungslos nach rechts oben */
+        a[rel~="external"]:hover::after {
+            /* Kombiniert das vertikale Zentrieren mit der Flug-Animation */
+            transform: translate(3px, calc(-50% - 3px)); 
+        }
+        /* =====================================================================
+        Styling NUR für Links mit dem Attribut rel="internal" (Pfeil nach unten)
+        ===================================================================== */
+        a[rel="internal"] {
+            color: #00adb5;
+            text-decoration: none !important;
+            
+            /* Rahmenlinie unter dem Text */
+            border-bottom: 1px solid #00adb5;
+            padding-bottom: 2px;
+            margin-right: 14px;               /* Platz für den Pfeil außerhalb der Linie */
+            
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            transition: color 0.2s ease, border-color 0.2s ease;
+        }
 
-/* Hover-Effekt: Farben leuchten auf */
-a[rel="internal"]:hover {
-    color: #00fff2;
-    border-color: #00fff2;
-}
+        /* =====================================================================
+        Styling NUR für Links mit dem Attribut rel="internal" (Pfeil nach rechts)
+        ===================================================================== */
+        a[rel="internal"] {
+            color: #00adb5;
+            text-decoration: none !important;
+            
+            /* Rahmenlinie unter dem Text */
+            border-bottom: 1px solid #00adb5;
+            padding-bottom: 2px;
+            margin-right: 14px;               /* Platz für den Pfeil außerhalb der Linie */
+            
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            transition: color 0.2s ease, border-color 0.2s ease;
+        }
 
-/* Der Pfeil bewegt sich rein HORIZONTAL nach rechts */
-a[rel="internal"]:hover::after {
-    /* Schiebt den Pfeil 4px nach rechts, bleibt aber vertikal exakt zentriert (-50%) */
-    transform: translate(4px, -50%); 
-}    </style>
+        /* Der horizontale Pfeil nach rechts (→) */
+        a[rel="internal"]::after {
+            content: "→";                     /* Das Unicode-Zeichen für rechts */
+            font-size: 0.9em;                 /* Horizontale Pfeile wirken oft etwas zierlicher, daher minimal größer */
+            
+            /* Pfeil wird absolut außerhalb der border-bottom-Linie positioniert */
+            position: absolute;
+            right: -14px;
+            top: 50%;
+            transform: translateY(-50%);
+            
+            display: inline-block;
+            transition: transform 0.2s ease;
+        }
+
+        /* Hover-Effekt: Farben leuchten auf */
+        a[rel="internal"]:hover {
+            color: #00fff2;
+            border-color: #00fff2;
+        }
+
+        /* Der Pfeil bewegt sich rein HORIZONTAL nach rechts */
+        a[rel="internal"]:hover::after {
+            /* Schiebt den Pfeil 4px nach rechts, bleibt aber vertikal exakt zentriert (-50%) */
+            transform: translate(4px, -50%); 
+        }
+    </style>
 </head>
 <body>
 
 <div class="container">
     <header>
+        [matrix]
+        <h1>POLARIS</h1>
         <div class="badge">Open Public Infrastructure</div>
-        <h1>🌌 POLARIS</h1>
         <!-- POLARIS Hero Image (Urban Radio Station Style) -->
         <div style="width: 100%; max-width: 1100px; margin: 2.5rem auto; padding: 0 15px; box-sizing: border-box;">
-          <img src="assets/img/polaris-station.jpg" 
+          <img src="assets/img/polaris-cover-en.jpg" 
                alt="POLARIS - Dezentrale Matrix-Funkstation im urbanen Stil" 
                style="width: 100%; height: auto; display: block; border-radius: 12px; box-shadow: 0 6px 25px rgba(0,0,0,0.3); object-fit: cover;">
         </div>
@@ -287,7 +298,37 @@ a[rel="internal"]:hover::after {
     </header>
 
     <section>
+        <h2>POLARIS im Alltag</h2>
+        <div style="width: 100%; max-width: 1100px; margin: 2.5rem auto; padding: 0 15px; box-sizing: border-box;">
+          <img src="assets/img/polaris-family.jpg" 
+               alt="POLARIS - Dezentrale Matrix-Funkstation im urbanen Stil" 
+               style="width: 100%; height: auto; display: block; border-radius: 12px; box-shadow: 0 6px 25px rgba(0,0,0,0.3); object-fit: cover;">
+        </div>
+<p><h3> Zuhause 🏡 Der direkte Draht </h3></p>
+<p>Sie sitzen morgens am Küchentisch und trinken Kaffee. Ihnen fällt ein, dass Sie für den nächsten Monat dringend einen neuen Reisepass beantragen müssen.</p>
+<p><strong>• So hilft POLARIS:</strong> Sie öffnen einfach <a href="https://matrix.org/ecosystem/clients/element-x/" rel="external noopener" target="_blank">Element X</a> auf ihrem Desktop oder Smartphone. Kein langes Suchen nach Telefonnummern, kein Warten in der Schleife. Über den verifizierten Kanal des Bürgerbüros schreiben Sie direkt: <em>„Guten Morgen, ich benötige einen Termin für einen Reisepass.“</em> Ein automatischer Assistent oder ein Mitarbeiter im Rathaus antwortet Ihnen direkt im sicheren Chat und schickt Ihnen einen Termin.</p>
+<p><strong>• Der Mehrwert vor Ort:</strong> Gleichzeitig erhalten Sie im lokalen Kanal der Stadt die Meldung, dass wegen dringender Wartungsarbeiten das Wasser in Ihrer Straße am Donnerstagvormittag kurzzeitig abgestellt wird. Sie sind informiert, bevor das Problem entsteht – datenschutzkonform und ohne, dass Ihre Daten an Werbekonzerne fließen.</p>
+<p><h3> Im Auto 🚗 Sicherheit in Echtzeit </h3></p>
+<p>Sie fahren am Wochenende über die Bundesstraße Richtung Goslar oder Osterode. Das Wetter im Oberharz schlägt plötzlich um – dichter Nebel und plötzliches Glatteis setzen ein.</p>
+<p><strong>• So hilft POLARIS:</strong> Ihr Smartphone erkennt im Hintergrund (völlig anonym und ohne Ihren Standort ins Internet zu senden!), dass Sie sich auf einer bestimmten Strecke befinden. Die App schaltet automatisch und lautlos den offiziellen Verkehrswarnkanal der Region frei.</p>
+<p><strong>• Der Mehrwert unterwegs:</strong> Bevor Sie in die Gefahrenzone einfahren, erhalten Sie eine prägnante Push-Nachricht: <em>„Achtung: Blitzeis auf der B242 Höhe Altenau. Bitte Fahrweise anpassen.“</em> Sobald Sie die Gefahrenzone oder den Landkreis wieder verlassen, blendet die App diesen Kanal im Hintergrund automatisch wieder aus, um Ihr Smartphone übersichtlich zu halten. Sie sind geschützt, genau dann, wenn es darauf ankommt.</p>
+<p><h3> Im Urlaub 🏖️ Immer Up To Date </h3></p>
+<p>Sie machen Sommerurlaub an der Nordsee oder in einer anderen  „Digital Souveränen Region“, die im <strong>POLARIS</strong> Verbund ist.</p>
+<p><strong>• So hilft POLARIS:</strong> Sie müssen keine neue, komplizierte Tourismus- oder Warn-App für Ihren Urlaubsort herunterladen. Da das Matrix-Netzwerk im Hintergrund deutschlandweit föderiert (vernetzt) ist, bleibt Ihre App dieselbe.</p>
+<p><strong>• Der Mehrwert vor Ort:</strong> Sobald Sie in Ihrem Urlaubsort ankommen, merkt Ihre App: <em>„Wir sind jetzt in Gemeinde X“</em>. Sofort haben Sie Zugriff auf den dortigen Bürger- und Touristenkanal. Sie erhalten sofort die wichtigsten lokalen Infos auf Ihr Handy:</p>
+<p>• Wo gibt es heute frischen Fisch?</p>
+<p>• Welche Strandabschnitte sind überfüllt?</p>
+<p>• Gibt es eine Unwetterwarnung für die Küste?</p>
+<p>Wenn Sie nach zwei Wochen wieder nach Hause in den Oberharz fahren, meldet sich die App automatisch aus den Urlaubskanälen ab – ganz von allein, sauber und unkompliziert.</p>
+    </section>
+
+    <section>
         <h2>💡 Die Vision</h2>
+        <div style="width: 100%; max-width: 1100px; margin: 2.5rem auto; padding: 0 15px; box-sizing: border-box;">
+          <img src="assets/img/polaris-cover-de.jpg" 
+               alt="POLARIS - Dezentrale Matrix-Funkstation im urbanen Stil" 
+               style="width: 100%; height: auto; display: block; border-radius: 12px; box-shadow: 0 6px 25px rgba(0,0,0,0.3); object-fit: cover;">
+        </div>
         <p>Die Digitalisierung unserer Städte hat sich in eine Sackgasse aus teuren Software-Abonnements und komplizierter Bundesbürokratie manövriert. <strong>POLARIS</strong> bricht die Abhängigkeiten von globalen IT-Monopolen auf und fordert <strong>OpenDesk</strong> als Voraussetzung für ein zukunftsfähiges, „Digital Souveränes Rathaus“. Auf dieser Basis und dem weltweit etablierten, sicheren <strong>Matrix-Protokoll</strong> errichten wir einen dezentralen Verbund von Gemeindenetzwerken für den Bürger.</p>
         
         <ul class="feature-list">
@@ -321,28 +362,13 @@ Ein zentraler Baustein des POLARIS-Ökosystems ist der auf  <a href="https://git
         <h3>🛠️ Geo-Fencing Gateway</h3>
 <p>
 Das <a href="https://github.com/eZiner/matrix-polaris-gateway/" rel="internal">Matrix-POLARIS-Gateway</a> ist das innovative Herzstück des Projekts. Es fungiert wie eine digitale „Radio-Station“ für Regionen: Wenn Bürger oder Pendler eine Regionsgrenze passieren, klinkt sich ihr System im Hintergrund vollautomatisch und geräuschlos in die lokale „Frequenz“ ein, um ortsbezogene Info-Services, Bürger-Kanäle und Alarmsysteme direkt nutzbar zu machen.        
+        <div style="width: 100%; max-width: 1100px; margin: 2.5rem auto; padding: 0 15px; box-sizing: border-box;">
+          <img src="assets/img/polaris-station.jpg" 
+               alt="POLARIS - Dezentrale Matrix-Funkstation im urbanen Stil" 
+               style="width: 100%; height: auto; display: block; border-radius: 12px; box-shadow: 0 6px 25px rgba(0,0,0,0.3); object-fit: cover;">
+        </div>
 </p>
 
-    </section>
-
-    <section>
-        <h2>🌌 POLARIS im Alltag</h2>
-<p><strong>🏡 Zuhause im Oberharz - Der direkte Draht</strong></p>
-<p>Sie sitzen morgens am Küchentisch und trinken Kaffee. Ihnen fällt ein, dass Sie für den nächsten Monat dringend einen neuen Reisepass beantragen müssen.</p>
-<p><strong>• So hilft POLARIS:</strong> Sie öffnen einfach <a href="https://matrix.org/ecosystem/clients/element-x/" rel="external noopener" target="_blank">Element X</a> auf ihrem Desktop oder Smartphone. Kein langes Suchen nach Telefonnummern, kein Warten in der Schleife. Über den verifizierten Kanal des Bürgerbüros schreiben Sie direkt: <em>„Guten Morgen, ich benötige einen Termin für einen Reisepass.“</em> Ein automatischer Assistent oder ein Mitarbeiter im Rathaus antwortet Ihnen direkt im sicheren Chat und schickt Ihnen einen Termin.</p>
-<p><strong>• Der Mehrwert vor Ort:</strong> Gleichzeitig erhalten Sie im lokalen Kanal der Stadt die Meldung, dass wegen dringender Wartungsarbeiten das Wasser in Ihrer Straße am Donnerstagvormittag kurzzeitig abgestellt wird. Sie sind informiert, bevor das Problem entsteht – datenschutzkonform und ohne, dass Ihre Daten an Werbekonzerne fließen.</p>
-<p><strong>🚗 Unterwegs – Sicherheit in Echtzeit</strong></p>
-<p>Sie fahren am Wochenende über die Bundesstraße Richtung Goslar oder Osterode. Das Wetter im Oberharz schlägt plötzlich um – dichter Nebel und plötzliches Glatteis setzen ein.</p>
-<p><strong>• So hilft POLARIS:</strong> Ihr Smartphone erkennt im Hintergrund (völlig anonym und ohne Ihren Standort ins Internet zu senden!), dass Sie sich auf einer bestimmten Strecke befinden. Die App schaltet automatisch und lautlos den offiziellen Verkehrswarnkanal der Region frei.</p>
-<p><strong>• Der Mehrwert vor Ort:</strong> Bevor Sie in die Gefahrenzone einfahren, erhalten Sie eine prägnante Push-Nachricht: <em>„Achtung: Blitzeis auf der B242 Höhe Altenau. Bitte Fahrweise anpassen.“</em> Sobald Sie die Gefahrenzone oder den Landkreis wieder verlassen, blendet die App diesen Kanal im Hintergrund automatisch wieder aus, um Ihr Smartphone übersichtlich zu halten. Sie sind geschützt, genau dann, wenn es darauf ankommt.</p>
-<p><strong>🏖️ Im Urlaub – Immer Up To Date</strong></p>
-<p>Sie machen Sommerurlaub an der Nordsee, im Allgäu oder in einer anderen deutschen „Digital Souveränen Region“, die im <strong>POLARIS</strong> Verbund ist.</p>
-<p><strong>• So hilft POLARIS:</strong> Sie müssen keine neue, komplizierte Tourismus- oder Warn-App für Ihren Urlaubsort herunterladen. Da das Matrix-Netzwerk im Hintergrund deutschlandweit föderiert (vernetzt) ist, bleibt Ihre App dieselbe.</p>
-<p><strong>• Der Mehrwert vor Ort:</strong> Sobald Sie in Ihrem Urlaubsort ankommen, merkt Ihre App: <em>„Wir sind jetzt in Gemeinde X“</em>. Sofort haben Sie Zugriff auf den dortigen Bürger- und Touristenkanal. Sie erhalten sofort die wichtigsten lokalen Infos auf Ihr Handy:</p>
-<p>• Wo gibt es heute frischen Fisch?</p>
-<p>• Welche Strandabschnitte sind überfüllt?</p>
-<p>• Gibt es eine Unwetterwarnung für die Küste?</p>
-<p>Wenn Sie nach zwei Wochen wieder nach Hause in den Oberharz fahren, meldet sich die App automatisch aus den Urlaubskanälen ab – ganz von allein, sauber und unkompliziert.</p>
     </section>
     
     <section>
