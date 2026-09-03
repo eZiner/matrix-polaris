@@ -446,13 +446,58 @@ Ein zentraler Baustein des POLARIS-Ökosystems ist der auf  <a href="https://git
         <h3>🛠️ Geo-Fencing Gateway</h3>
 <p>
 Das <a href="https://github.com/eZiner/matrix-polaris-gateway/" rel="internal">Matrix-POLARIS-Gateway</a> ist das innovative Herzstück des Projekts. Es fungiert wie eine digitale „Radio-Station“ für Regionen: Wenn Bürger oder Pendler eine Regionsgrenze passieren, klinkt sich ihr System im Hintergrund vollautomatisch und geräuschlos in die lokale „Frequenz“ ein, um ortsbezogene Info-Services, Bürger-Kanäle und Alarmsysteme direkt nutzbar zu machen.        
+</p>
+    <h3>⚙️ Technischer Ablauf<br>Föderierter Auto-Join in Infospaces</h3>
         <div style="width: 100%; max-width: 1100px; margin: 2.5rem auto; padding: 0 15px; box-sizing: border-box;">
           <img src="assets/img/polaris-station.jpg" 
                alt="POLARIS - Dezentrale Matrix-Funkstation im urbanen Stil" 
                style="width: 100%; height: auto; display: block; border-radius: 12px; box-shadow: 0 6px 25px rgba(0,0,0,0.3); object-fit: cover;">
         </div>
-</p>
+<!-- START: Technischer Ablauf (Föderierter Auto-Join) -->
 
+    
+
+    <h3>1. Event-Trigger &amp; Transport (Client-Ebene)</h3>
+    <ol>
+        <li>Die GPS-Hardware des Smartphones registriert das Überschreiten einer Sektorengrenze (Zellenwechsel).</li>
+        <li>Der Matrix-Client (z. B. Element) verpackt die Koordinaten (WGS84) in ein standardisiertes Standort-Event (<code>m.location</code> oder <code>m.beacon</code>).</li>
+        <li>Das Event wird Ende-zu-Ende verschlüsselt (Megolm) und via HTTPS-POST <strong>ausschließlich in den vordefinierten privaten 1:1-Raum des lokalen Geo-Fencing-Bots</strong> auf dem Heimat-Server (<code>matrix.goslar.de</code>) übertragen.</li>
+    </ol>
+
+    <h3>2. Flüchtige In-Memory-Verarbeitung (Heimat-Gateway)</h3>
+    <ol>
+        <li>Der Heimat-Bot (<code>matrix-polaris-gateway</code>) empfängt das Event asynchron, holt den temporären Raumschlüssel und dechiffriert die Koordinaten <strong>flüchtig im Arbeitsspeicher (RAM)</strong>.</li>
+        <li>Der Bot führt eine mathematische Geometrie-Prüfung gegen die lokale PostGIS-Datenbank aus, deren Polygone automatisiert über OpenStreetMap (Overpass-Turbo) gespeist werden.</li>
+        <li><strong>Sofortige Datenhygiene:</strong> Direkt nach der SQL-Rückmeldung werden die exakten GPS-Daten <strong>restlos aus dem RAM gelöscht</strong>. Es verbleibt kein Bewegungsprofil auf dem Server.</li>
+        <li><strong>Das Ergebnis:</strong> Die Datenbank meldet einen Match für eine fremde Urlaubsregion. Der Ziel-Kanal ist ein übergeordneter Container-Raum, der <strong>Infospace</strong> (<code>!cuxhaven_space:cuxhaven.de</code>).</li>
+    </ol>
+
+    <h3>3. Föderierter Brücken-Workflow (Server-zu-Server)</h3>
+    <h4>Da der Ziel-Infospace auf einem fremden Homeserver liegt, greift das Matrix-Föderationsprotokoll (Port 8448):</h4>
+    <ol>
+        <li>Der Heimat-Server (<code>matrix.goslar.de</code>) sendet eine automatisierte Föderations-Anfrage im Namen des Nutzers an den fremden Server (<code>matrix.cuxhaven.de</code>).</li>
+        <li>Der fremde Server empfängt den Beitrittswunsch (<code>join</code>) für den Infospace (<code>!cuxhaven_space:cuxhaven.de</code>).</li>
+        <li><strong>Die Protokoll-Schutzmauer:</strong> Auf dem Cuxhavener Server greift die native Matrix <strong><code>restricted</code> Join Rule</strong>. Der Server prüft kryptografisch: <em>„Ist der anfragende Heimat-Server Teil unseres gemeinsamen universitären <strong>Mutter-Spaces</strong> (<code>#polaris-verbund</code>)?“</em></li>
+        <li><strong>Die Autorisierung:</strong> Da der Server verifiziert ist, wird das Beitritts-Event im globalen Raumzustand (<code>Room State</code>) repliziert. Externe Server (wie <code>matrix.org</code>) werden an dieser Schnittstelle hart mit einem <code>403 Forbidden</code> abgewiesen.</li>
+    </ol>
+
+    <h3>4. Geräuschloser Auto-Join im Client (Bürger-Ebene)</h3>
+    <ol>
+        <li>Durch die protokollseitige Autorisierung wird der Nutzer <code>@max:goslar.de</code> <strong>vollautomatisch und ohne sichtbare Raumeinladung (Invite)</strong> in den Infospace eingeklinkt.</li>
+        <li><strong>Der UI-Effekt im Messenger:</strong> In der Element-App des Bürgers erscheint geräuschlos ein einklappbarer Ordner (der Space) für die Region Cuxhaven.</li>
+        <li>Durch die native Spaces-Vererbung sind alle im Container liegenden Unterkanäle (z. B. Schule, ÖPNV, lokale Warnungen) für das Smartphone sofort entschlüsselbar und lesbar. Der Bürger muss keinen einzigen Raum manuell abonnieren.</li>
+    </ol>
+
+    <h3>5. Das automatisierte Exit-Protokoll (Datenhygiene)</h3>
+    <ol>
+        <li>Verlässt der Bürger das Polygon, meldet die PostGIS-Abfrage des Heimat-Bots den Zustand <code>OUTSIDE</code>.</li>
+        <li>Um GPS-Springen an Grenzen abzufedern, wird die User-ID für die Zone auf eine interne Warteliste gesetzt.</li>
+        <li>Nach Ablauf eines 10-Minuten-Hysterese-Cooldowns sendet der Heimat-Bot ein Signal an das Cuxhavener Gateway.</li>
+        <li>Das Cuxhavener Gateway führt einen automatisierten Server-Kick (<code>kick</code>) für den Nutzer aus dem übergeordneten Infospace aus.</li>
+        <li><strong>Das Ergebnis:</strong> Der gesamte Ordner inklusive aller Unterkanäle verschwindet schlagartig und restlos vom Smartphone des Bürgers. Die Chat-Liste ist wieder absolut sauber.</li>
+    </ol>
+
+<!-- ENDE: Technischer Ablauf (Föderierter Auto-Join) -->
     </section>
     
     <section>
