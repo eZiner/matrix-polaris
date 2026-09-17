@@ -510,13 +510,13 @@ Das <a href="https://github.com/eZiner/matrix-polaris-gateway/" rel="internal">M
     <ol>
         <li>Die GPS-Hardware des Smartphones registriert das Überschreiten einer Sektorengrenze (Zellenwechsel).</li>
         <li>Der Matrix-Client (z. B. Element) verpackt die Koordinaten (WGS84) in ein standardisiertes Standort-Event (<code>m.location</code> oder <code>m.beacon</code>).</li>
-        <li>Das Event wird Ende-zu-Ende verschlüsselt (Megolm) und via HTTPS-POST <strong>ausschließlich in den vordefinierten privaten 1:1-Raum des lokalen Geo-Fencing-Bots</strong> auf dem Heimat-Server (<code>matrix.goslar.de</code>) übertragen.</li>
+        <li>Das Event wird Ende-zu-Ende verschlüsselt (Megolm) und via HTTPS-POST direkt an den Heimat-Server (z. B. matrix.goslar.de) übertragen, wo das <strong>POLARIS-Gateway als privilegierter Dienst</strong> das Event abfängt</li>
     </ol>
 
     <h3>2. Flüchtige In-Memory-Verarbeitung (Heimat-Gateway)</h3>
     <ol>
         <li>Der Heimat-Bot (<code>matrix-polaris-gateway</code>) empfängt das Event asynchron, holt den temporären Raumschlüssel und dechiffriert die Koordinaten <strong>flüchtig im Arbeitsspeicher (RAM)</strong>.</li>
-        <li>Der Bot führt eine mathematische Geometrie-Prüfung gegen die lokale PostGIS-Datenbank aus, deren Polygone automatisiert über OpenStreetMap (Overpass-Turbo) gespeist werden.</li>
+        <li>Der Bot führt eine mathematische Geometrie-Prüfung gegen die lokale PostGIS-Datenbank aus.</li>
         <li><strong>Sofortige Datenhygiene:</strong> Direkt nach der SQL-Rückmeldung werden die exakten GPS-Daten <strong>restlos aus dem RAM gelöscht</strong>. Es verbleibt kein Bewegungsprofil auf dem Server.</li>
         <li><strong>Das Ergebnis:</strong> Die Datenbank meldet einen Match für eine fremde Urlaubsregion. Der Ziel-Kanal ist ein übergeordneter Container-Raum, der <strong>Infospace</strong> (<code>!cuxhaven_space:cuxhaven.de</code>).</li>
     </ol>
