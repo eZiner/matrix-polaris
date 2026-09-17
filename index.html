@@ -515,8 +515,8 @@ Das <a href="https://github.com/eZiner/matrix-polaris-gateway/" rel="internal">M
 
     <h3>2. Flüchtige In-Memory-Verarbeitung (Heimat-Gateway)</h3>
     <ol>
-        <li>Der Heimat-Bot (<code>matrix-polaris-gateway</code>) empfängt das Event asynchron, holt den temporären Raumschlüssel und dechiffriert die Koordinaten <strong>flüchtig im Arbeitsspeicher (RAM)</strong>.</li>
-        <li>Der Bot führt eine mathematische Geometrie-Prüfung gegen die lokale PostGIS-Datenbank aus.</li>
+        <li>Das Matrix-Polaris-Gateway</code> empfängt das Event asynchron, holt den temporären Raumschlüssel und dechiffriert die Koordinaten <strong>flüchtig im Arbeitsspeicher (RAM)</strong>.</li>
+        <li>Das Gateway führt eine mathematische Geometrie-Prüfung gegen die lokale PostGIS-Datenbank aus.</li>
         <li><strong>Sofortige Datenhygiene:</strong> Direkt nach der SQL-Rückmeldung werden die exakten GPS-Daten <strong>restlos aus dem RAM gelöscht</strong>. Es verbleibt kein Bewegungsprofil auf dem Server.</li>
         <li><strong>Das Ergebnis:</strong> Die Datenbank meldet einen Match für eine fremde Urlaubsregion. Der Ziel-Kanal ist ein übergeordneter Container-Raum, der <strong>Infospace</strong> (<code>!cuxhaven_space:cuxhaven.de</code>).</li>
     </ol>
@@ -539,9 +539,9 @@ Das <a href="https://github.com/eZiner/matrix-polaris-gateway/" rel="internal">M
 
     <h3>5. Das automatisierte Exit-Protokoll (Datenhygiene)</h3>
     <ol>
-        <li>Verlässt der Bürger das Polygon, meldet die PostGIS-Abfrage des Heimat-Bots den Zustand <code>OUTSIDE</code>.</li>
+        <li>Verlässt der Bürger das Polygon, meldet die PostGIS-Abfrage des Heimat-Gateways den Zustand <code>OUTSIDE</code>.</li>
         <li>Um GPS-Springen an Grenzen abzufedern, wird die User-ID für die Zone auf eine interne Warteliste gesetzt.</li>
-        <li>Nach Ablauf eines 10-Minuten-Hysterese-Cooldowns sendet der Heimat-Bot ein Signal an das Cuxhavener Gateway.</li>
+        <li>Nach Ablauf eines 10-Minuten-Hysterese-Cooldowns sendet das Heimat-Gateway ein Signal an das Cuxhavener Gateway.</li>
         <li>Das Cuxhavener Gateway führt einen automatisierten Server-Kick (<code>kick</code>) für den Nutzer aus dem übergeordneten Infospace aus.</li>
         <li><strong>Das Ergebnis:</strong> Der gesamte Ordner inklusive aller Unterkanäle verschwindet schlagartig und restlos vom Smartphone des Bürgers. Die Chat-Liste ist wieder absolut sauber.</li>
     </ol>
